@@ -37,7 +37,6 @@ struct ContentView: View {
         .sheet(isPresented: $showingAbout) {
             AboutView()
         }
-        .background(SettingsOpener())
     }
 
     private var listSection: some View {
@@ -158,14 +157,3 @@ private struct AppEntryRow: View {
     }
 }
 
-/// 监听菜单栏"设置…"通知，调用 SwiftUI openSettings 打开设置窗口。
-private struct SettingsOpener: View {
-    @Environment(\.openSettings) private var openSettings
-
-    var body: some View {
-        Color.clear
-            .onReceive(NotificationCenter.default.publisher(for: .openSettingsRequest)) { _ in
-                openSettings()
-            }
-    }
-}

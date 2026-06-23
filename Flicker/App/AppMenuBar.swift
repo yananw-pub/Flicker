@@ -7,10 +7,6 @@
 
 import AppKit
 
-extension Notification.Name {
-    static let openSettingsRequest = Notification.Name("FlickerOpenSettingsRequest")
-}
-
 @MainActor
 final class AppMenuBar {
     static let shared = AppMenuBar()
@@ -56,6 +52,11 @@ final class AppMenuBar {
 
         menu.addItem(.separator())
 
+        let updateItem = menu.addItem(withTitle: "检查更新…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updateItem.target = self
+
+        menu.addItem(.separator())
+
         let quitItem = menu.addItem(withTitle: "退出 Flicker", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
 
@@ -63,11 +64,16 @@ final class AppMenuBar {
     }
 
     @objc private func showMainWindow() {
-        (NSApp.delegate as? AppDelegate)?.showMainWindow()
+        AppActions.shared.openMainWindow?()
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     @objc private func openSettings() {
-        NotificationCenter.default.post(name: .openSettingsRequest, object: nil)
+        AppActions.shared.openSettings?()
+    }
+
+    @objc private func checkForUpdates() {
+        UpdateChecker.checkManually()
     }
 
     @objc private func quit() {

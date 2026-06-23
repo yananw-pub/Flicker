@@ -6,6 +6,8 @@
 	objectVersion = 77;
 	objects = {
 /* Begin PBXBuildFile section */
+		AC65FD248088474716A53EE3 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3FB34AEE078485FBDDC8E /* UpdateChecker.swift */; };
+		ABC1965B1C239043D68EB32D /* AppActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB5B895CCC18444259CAE67 /* AppActions.swift */; };
 		A10001 /* AppEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001; };
 		A10002 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002; };
 		A10003 /* FlickerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20003; };
@@ -30,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		ACA3FB34AEE078485FBDDC8E /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
+		ABB5B895CCC18444259CAE67 /* AppActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppActions.swift; sourceTree = "<group>"; };
 		A20001 /* AppEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEntry.swift; sourceTree = "<group>"; };
 		A20002 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
 		A20017 /* MenuSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSettings.swift; sourceTree = "<group>"; };
@@ -89,6 +93,8 @@
 			children = (
 				A20003 /* FlickerApp.swift */,
 				A20011 /* AppDelegate.swift */,
+				ABB5B895CCC18444259CAE67 /* AppActions.swift */,
+				ACA3FB34AEE078485FBDDC8E /* UpdateChecker.swift */,
 				A20012 /* URLOpener.swift */,
 				A20013 /* AppSettings.swift */,
 				A20014 /* AppMenuBar.swift */,
@@ -208,6 +214,8 @@
 				A10014 /* MenuSettings.swift in Sources */,
 				A10003 /* FlickerApp.swift in Sources */,
 				A10009 /* AppDelegate.swift in Sources */,
+				ABC1965B1C239043D68EB32D /* AppActions.swift in Sources */,
+				AC65FD248088474716A53EE3 /* UpdateChecker.swift in Sources */,
 				A10010 /* URLOpener.swift in Sources */,
 				A10011 /* AppSettings.swift in Sources */,
 				A10012 /* AppMenuBar.swift in Sources */,

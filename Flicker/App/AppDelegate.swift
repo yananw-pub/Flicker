@@ -13,9 +13,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// 仅在主线程读写。
     nonisolated(unsafe) static var launchedByURL = false
 
-    /// 主窗口引用；关闭时不销毁，便于从菜单栏重新打开。
-    private var mainWindow: NSWindow?
-
     func applicationWillFinishLaunching(_ notification: Notification) {
         // 通过 URL 启动时，系统会带上 kAEGetURL Apple Event，direct object 即 URL 字符串。
         let event = NSAppleEventManager.shared().currentAppleEvent
@@ -31,18 +28,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // 捕获主窗口引用，关闭时不销毁，便于从菜单栏重新打开。
-        if let window = NSApp.windows.first {
-            window.isReleasedWhenClosed = false
-            mainWindow = window
-        }
-
         if Self.launchedByURL {
             // 静默运行：隐藏窗口，不应用界面设置，仅同步登录项。
             NSApp.windows.forEach { $0.orderOut(nil) }
             AppSettings.shared.applyLoginItem()
         } else {
             AppSettings.shared.applyAll()
+            // 延迟 3 秒后静默检查更新，不阻塞启动。
+            Task {
+                try? await Task.sleep(for: .seconds(3))
+                UpdateChecker.checkAndNotify()
+            }
         }
     }
 
@@ -58,9 +54,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return !AppSettings.shared.showMenuBarIcon
     }
 
-    @objc func showMainWindow() {
-        let window = mainWindow ?? NSApp.windows.first
-        window?.makeKeyAndOrderFront(nil)
+    @MainActor @objc func showMainWindow() {
+        AppActions.shared.openMainWindow?()
         NSApp.activate(ignoringOtherApps: true)
     }
 }
