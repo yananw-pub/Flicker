@@ -13,6 +13,7 @@ struct ContentView: View {
     @EnvironmentObject private var store: AppEntryStore
     @Environment(\.openSettings) private var openSettings
     @State private var showingAddSheet = false
+    @State private var showingAbout = false
     @State private var editing: AppEntry?
 
     var body: some View {
@@ -32,6 +33,9 @@ struct ContentView: View {
                 if let result { store.add(result) }
                 showingAddSheet = false
             }
+        }
+        .sheet(isPresented: $showingAbout) {
+            AboutView()
         }
         .background(SettingsOpener())
     }
@@ -78,6 +82,13 @@ struct ContentView: View {
                 Label("设置", systemImage: "gearshape")
             }
             .help("打开设置")
+
+            Button {
+                showingAbout = true
+            } label: {
+                Label("关于", systemImage: "info.circle")
+            }
+            .help("关于 Flicker")
 
             Spacer()
 
