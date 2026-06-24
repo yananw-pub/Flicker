@@ -18,6 +18,7 @@ import os
 enum SharedStore {
     static let configFileName = "app_entries.json"
     static let menuSettingsFileName = "menu_settings.json"
+    static let newFileSettingsFileName = "new_file_settings.json"
     static let appSupportSubdir = "Flicker"
     private static let logger = Logger(subsystem: "com.wangyanan.flicker", category: "SharedStore")
 
@@ -49,6 +50,11 @@ enum SharedStore {
     /// 菜单设置文件 URL。
     static var menuSettingsFileURL: URL? {
         sharedDirectoryURL?.appendingPathComponent(menuSettingsFileName, isDirectory: false)
+    }
+    
+    /// 新建文件设置文件 URL。
+    static var newFileSettingsFileURL: URL? {
+        sharedDirectoryURL?.appendingPathComponent(newFileSettingsFileName, isDirectory: false)
     }
 
     /// 读取应用列表。
@@ -101,6 +107,34 @@ enum SharedStore {
             return true
         } catch {
             logger.error("saveMenuSettings failed: \(error.localizedDescription, privacy: .public)")
+            return false
+        }
+    }
+    
+    // MARK: - New File Settings
+    
+    /// 读取新建文件设置。文件不存在时返回默认值。
+    static func loadNewFileSettings() -> NewFileSettings {
+        guard let url = newFileSettingsFileURL,
+              let data = try? Data(contentsOf: url) else { return .defaults }
+        do {
+            return try JSONDecoder().decode(NewFileSettings.self, from: data)
+        } catch {
+            logger.error("loadNewFileSettings decode failed: \(error.localizedDescription, privacy: .public)")
+            return .defaults
+        }
+    }
+    
+    /// 写入新建文件设置。
+    @discardableResult
+    static func saveNewFileSettings(_ settings: NewFileSettings) -> Bool {
+        guard let url = newFileSettingsFileURL else { return false }
+        do {
+            let data = try JSONEncoder().encode(settings)
+            try data.write(to: url, options: .atomic)
+            return true
+        } catch {
+            logger.error("saveNewFileSettings failed: \(error.localizedDescription, privacy: .public)")
             return false
         }
     }

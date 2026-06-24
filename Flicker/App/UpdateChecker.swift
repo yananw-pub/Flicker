@@ -23,8 +23,10 @@ struct UpdateChecker {
 
     // MARK: - Public
 
-    /// 静默检查，有更新时弹窗提示用户。
+    /// 静默检查，有更新时弹窗提示用户。受「自动检查更新」开关控制。
+    @MainActor
     static func checkAndNotify() {
+        guard AppSettings.shared.autoCheckUpdates else { return }
         Task {
             let result = await check()
             switch result {
@@ -39,6 +41,7 @@ struct UpdateChecker {
     }
 
     /// 手动检查（菜单项触发），无论是否有更新都给反馈。
+    @MainActor
     static func checkManually() {
         Task {
             let result = await check()

@@ -2,37 +2,39 @@
 //  SettingsView.swift
 //  Flicker
 //
-//  设置页：菜单栏图标、程序坞、开机自启动。
+//  DEPRECATED: 功能已拆分到 OpenWithPanel / ActionControlPanel / GeneralSettingsPanel
+//  此文件保留作为系统设置窗口的入口，引导用户前往主窗口配置。
 //
 
 import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject private var settings = AppSettings.shared
-
     var body: some View {
-        Form {
-            Section("界面") {
-                Toggle("在系统菜单栏显示图标", isOn: $settings.showMenuBarIcon)
-                    .help("关闭后将从菜单栏移除 Flicker 图标")
-                Toggle("在程序坞中显示", isOn: $settings.showInDock)
-                    .help("关闭后应用将作为菜单栏/后台应用运行")
+        VStack(spacing: 20) {
+            Image(systemName: "gearshape")
+                .font(.system(size: 48))
+                .foregroundStyle(.secondary)
+
+            Text("设置已移至主窗口")
+                .font(.title2)
+                .fontWeight(.medium)
+
+            Text("请在主窗口左侧导航栏中选择「通用设置」或「操作控制」进行配置。")
+                .font(.body)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 300)
+
+            Button("打开主窗口") {
+                AppActions.shared.openMainWindow?()
             }
-            Section("启动") {
-                Toggle("开机时自动启动", isOn: $settings.launchAtLogin)
-                    .help("登录 macOS 时自动运行 Flicker")
-            }
-            Section("右键菜单") {
-                Toggle("复制绝对路径", isOn: $settings.showCopyAbsolutePath)
-                    .help("在右键菜单中显示「复制绝对路径」")
-                Toggle("复制相对路径", isOn: $settings.showCopyRelativePath)
-                    .help("在右键菜单中显示「复制相对路径」")
-                Toggle("复制文件名", isOn: $settings.showCopyFileName)
-                    .help("在右键菜单中显示「复制文件名」")
-            }
+            .buttonStyle(.borderedProminent)
         }
-        .formStyle(.grouped)
+        .frame(width: 400, height: 300)
         .navigationTitle("设置")
-        .frame(width: 400, height: 340)
     }
+}
+
+#Preview {
+    SettingsView()
 }

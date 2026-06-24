@@ -58,4 +58,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         AppActions.shared.openMainWindow?()
         NSApp.activate(ignoringOtherApps: true)
     }
+    
+    // MARK: - URL Handling
+    
+    func application(_ application: NSApplication, open urls: [URL]) {
+        Log.debug("application open urls: \(urls)")
+        for url in urls {
+            URLOpener.handle(url)
+        }
+    }
 }

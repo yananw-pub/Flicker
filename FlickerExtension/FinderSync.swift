@@ -21,6 +21,15 @@ final class FinderSync: FIFinderSync {
 
     override func menu(for menuKind: FIMenuKind) -> NSMenu {
         let menu = NSMenu(title: "Flicker")
+        
+        // 处理空白区域右键（容器菜单）
+        if menuKind == .contextualMenuForContainer {
+            // 获取当前目录
+            if let targetURL = FIFinderSyncController.default().targetedURL() {
+                addNewFileMenu(to: menu, directory: targetURL.path)
+            }
+            return menu
+        }
 
         guard menuKind == .contextualMenuForItems || menuKind == .contextualMenuForSidebar,
               let urls = FIFinderSyncController.default().selectedItemURLs(), !urls.isEmpty else {
@@ -57,8 +66,48 @@ final class FinderSync: FIFinderSync {
         if menuSettings.showCopyFileName {
             menu.addItem(withTitle: "复制文件名", action: #selector(copyFileName(_:)), keyEquivalent: "")
         }
+        
+        // 新建文件子菜单（仅在文件夹或文件所在目录显示）
+        let directory = getTargetDirectory(for: target)
+        if let directory {
+            addNewFileMenu(to: menu, directory: directory)
+        }
 
         return menu
+    }
+    
+    /// 添加新建文件子菜单到指定菜单。
+    private func addNewFileMenu(to menu: NSMenu, directory: String) {
+        let newFileSettings = SharedStore.loadNewFileSettings()
+        let enabledTypes = NewFileType.defaults.filter { newFileSettings.enabledTypes.contains($0.id) }
+        guard !enabledTypes.isEmpty else { return }
+        
+        let newFileItem = NSMenuItem(title: "新建文件", action: nil, keyEquivalent: "")
+        let newFileSubmenu = NSMenu(title: "New File")
+        for fileType in enabledTypes {
+            let item = NSMenuItem(
+                title: "\(fileType.name) (.\(fileType.ext))",
+                action: #selector(createNewFile(_:)),
+                keyEquivalent: ""
+            )
+            item.target = self
+            item.toolTip = "\(fileType.id)|\(directory)"
+            if let icon = NSImage(systemSymbolName: fileType.icon, accessibilityDescription: nil) {
+                item.image = icon
+            }
+            newFileSubmenu.addItem(item)
+        }
+        newFileItem.submenu = newFileSubmenu
+        menu.addItem(newFileItem)
+    }
+    
+    /// 获取目标目录路径（如果是文件夹则返回其路径，否则返回文件所在目录）。
+    private func getTargetDirectory(for url: URL) -> String? {
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue {
+            return url.path
+        }
+        return url.deletingLastPathComponent().path
     }
 
     // MARK: - Actions
@@ -102,6 +151,72 @@ final class FinderSync: FIFinderSync {
         guard let urls = FIFinderSyncController.default().selectedItemURLs(), !urls.isEmpty else { return }
         let names = urls.map(\.lastPathComponent).joined(separator: "\n")
         copyToPasteboard(names)
+    }
+    
+    @objc private func createNewFile(_ sender: NSMenuItem) {
+        Log.debug("createNewFile called")
+        Log.debug("title=\(sender.title)")
+        Log.debug("toolTip=\(sender.toolTip ?? "nil")")
+        Log.debug("tag=\(sender.tag)")
+        
+        guard let identifier = sender.toolTip,
+              let separatorIndex = identifier.firstIndex(of: "|") else {
+            Log.debug("missing or invalid toolTip, trying to parse from title")
+            // 尝试从 title 中解析文件类型
+            let title = sender.title
+            if let ext = extractExtension(from: title) {
+                Log.debug("extracted ext=\(ext) from title")
+                // 使用 targetedURL 获取当前目录
+                if let targetURL = FIFinderSyncController.default().targetedURL() {
+                    let path = targetURL.path
+                    Log.debug("using targetedURL path=\(path)")
+                    proceedWithNewFile(type: ext, path: path)
+                    return
+                }
+            }
+            Log.error("could not determine file type")
+            return
+        }
+        
+        let type = String(identifier[identifier.startIndex..<separatorIndex])
+        let path = String(identifier[identifier.index(after: separatorIndex)...])
+        
+        Log.debug("type=\(type), path=\(path)")
+        proceedWithNewFile(type: type, path: path)
+    }
+    
+    /// 从标题中提取文件扩展名，如 "文本文档 (.txt)" -> "txt"
+    private func extractExtension(from title: String) -> String? {
+        // 查找括号中的扩展名
+        guard let start = title.lastIndex(of: "("),
+              let end = title.lastIndex(of: ")"),
+              start < end else { return nil }
+        let extRange = title.index(after: start)..<end
+        var ext = String(title[extRange])
+        // 移除开头的点
+        if ext.hasPrefix(".") {
+            ext = String(ext.dropFirst())
+        }
+        return ext.isEmpty ? nil : ext
+    }
+    
+    /// 通过 URL Scheme 调用容器 App 创建文件
+    private func proceedWithNewFile(type: String, path: String) {
+        Log.debug("proceedWithNewFile: type=\(type), path=\(path)")
+        guard var comps = URLComponents(string: "flicker://newfile") else {
+            Log.error("proceedWithNewFile: failed to create URLComponents")
+            return
+        }
+        comps.queryItems = [
+            URLQueryItem(name: "type", value: type),
+            URLQueryItem(name: "path", value: path)
+        ]
+        guard let url = comps.url else {
+            Log.error("proceedWithNewFile: failed to create URL")
+            return
+        }
+        Log.debug("proceedWithNewFile: opening URL: \(url)")
+        NSWorkspace.shared.open(url)
     }
 
     // MARK: - Helpers

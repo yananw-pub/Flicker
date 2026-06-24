@@ -21,6 +21,10 @@
 		A10013 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20015; };
 		A10014 /* MenuSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20017; };
 		A10015 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20018; };
+		A10017 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20020; };
+		A10018 /* OpenWithPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20021; };
+		A10019 /* ActionControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20022; };
+		A10020 /* GeneralSettingsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20023; };
 		A10007 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A20007; };
 		A10008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20008; };
 
@@ -29,6 +33,8 @@
 		A10103 /* FinderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20101; };
 		A10104 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A20102; };
 		A10105 /* MenuSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20017; };
+		A10016 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20019; };
+		A10106 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20019; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +53,11 @@
 		A20014 /* AppMenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMenuBar.swift; sourceTree = "<group>"; };
 		A20015 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A20018 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		A20019 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		A20020 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		A20021 /* OpenWithPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWithPanel.swift; sourceTree = "<group>"; };
+		A20022 /* ActionControlPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionControlPanel.swift; sourceTree = "<group>"; };
+		A20023 /* GeneralSettingsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsPanel.swift; sourceTree = "<group>"; };
 		A20007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20008 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20009 /* Flicker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flicker.entitlements; sourceTree = "<group>"; };
@@ -103,6 +114,10 @@
 				A20004 /* AppEntryStore.swift */,
 				A20005 /* ContentView.swift */,
 				A20006 /* AppEntryEditor.swift */,
+				A20020 /* SidebarView.swift */,
+				A20021 /* OpenWithPanel.swift */,
+				A20022 /* ActionControlPanel.swift */,
+				A20023 /* GeneralSettingsPanel.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -113,6 +128,7 @@
 				A20001 /* AppEntry.swift */,
 				A20002 /* SharedStore.swift */,
 				A20017 /* MenuSettings.swift */,
+				A20019 /* Logger.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -224,6 +240,11 @@
 				A10004 /* AppEntryStore.swift in Sources */,
 				A10005 /* ContentView.swift in Sources */,
 				A10006 /* AppEntryEditor.swift in Sources */,
+				A10016 /* Logger.swift in Sources */,
+				A10017 /* SidebarView.swift in Sources */,
+				A10018 /* OpenWithPanel.swift in Sources */,
+				A10019 /* ActionControlPanel.swift in Sources */,
+				A10020 /* GeneralSettingsPanel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +256,7 @@
 				A10102 /* SharedStore.swift in Sources */,
 				A10105 /* MenuSettings.swift in Sources */,
 				A10103 /* FinderSync.swift in Sources */,
+				A10106 /* Logger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,7 +479,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 wangyanan. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -482,7 +504,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 wangyanan. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -502,7 +524,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FlickerExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@executable_path/../../../../Frameworks");
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -523,7 +545,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FlickerExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@executable_path/../../../../Frameworks");
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
