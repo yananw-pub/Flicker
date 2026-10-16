@@ -144,7 +144,9 @@ final class AppSettings: ObservableObject {
     }
 
     func applyWindowManagementVisibility() {
-        NSApp.windows.forEach(configureWindowManagementVisibility(_:))
+        for window in NSApp.windows {
+            configureWindowManagementVisibility(window)
+        }
     }
 
     func configureWindowManagementVisibility(_ window: NSWindow) {

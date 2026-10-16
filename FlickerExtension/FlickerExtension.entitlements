@@ -4,13 +4,12 @@
 <dict>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
-	<key>com.apple.security.app-groups</key>
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
+	<key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
 	<array>
-		<string>group.com.wangyanan.flicker</string>
-	</array>
-	<key>com.apple.security.temporary-exception.files.absolute-path.read-only</key>
-	<array>
-		<string>/Users/wangyanan/Library/Application Support/Flicker/</string>
+		<string>Library/Application Support/Flicker/</string>
+		<string>Library/Containers/com.wangyanan.flicker.extension/</string>
 	</array>
 </dict>
 </plist>

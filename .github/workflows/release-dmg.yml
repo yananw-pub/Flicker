@@ -1,0 +1,110 @@
+name: Build DMG
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_suffix:
+        description: "Optional DMG name suffix (e.g. sandbox-fix)"
+        required: false
+        default: ""
+  push:
+    branches:
+      - fix/home-relative-sandbox-exception
+      - main
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Flicker DMG
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          echo "Available Xcode apps:"
+          ls -1 /Applications | grep -i '^Xcode' || true
+          # 优先匹配 Xcode_16*.app，若无则挑选版本号最高的 Xcode_*.app，最后回退到系统默认 Xcode.app
+          XCODE_CANDIDATE=""
+          for candidate in /Applications/Xcode_16*.app /Applications/Xcode_*.app /Applications/Xcode.app; do
+            if [[ -d "$candidate" ]]; then
+              XCODE_CANDIDATE="$candidate"
+              break
+            fi
+          done
+
+          if [[ -n "$XCODE_CANDIDATE" ]]; then
+            echo "Selecting $XCODE_CANDIDATE"
+            sudo xcode-select -s "$XCODE_CANDIDATE"
+          else
+            echo "No Xcode.app found" >&2
+            exit 1
+          fi
+          xcode-select -p
+          xcodebuild -version
+          xcodebuild -showsdks | grep macosx || true
+
+      - name: Build DMG
+        env:
+          DMG_SUFFIX: ${{ github.event.inputs.version_suffix || '' }}
+        run: |
+          chmod +x ./scripts/build_dmg.sh
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            ./scripts/build_dmg.sh
+          elif [[ -n "${DMG_SUFFIX}" ]]; then
+            ./scripts/build_dmg.sh "${DMG_SUFFIX}"
+          else
+            SHORT_SHA="$(echo "${GITHUB_SHA}" | cut -c1-7)"
+            ./scripts/build_dmg.sh "ci-${SHORT_SHA}"
+          fi
+
+      - name: Upload xcodebuild log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: build/xcodebuild.log
+          if-no-files-found: ignore
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flicker-dmg
+          path: dist/*.dmg
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Create GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          DMG="$(ls dist/*.dmg | head -1)"
+          gh release create "${TAG}" "${DMG}" \
+            --title "${TAG}" \
+            --notes "$(cat <<EOF
+          ## Download
+
+          - \`${DMG##*/}\`
+
+          ## Notes
+
+          Ad-hoc signed CI build (not Apple notarized). On first open: right-click the app → Open, or remove quarantine:
+
+          \`\`\`bash
+          xattr -cr /Applications/Flicker.app
+          \`\`\`
+
+          Then enable Finder extension: System Settings → Privacy & Security → Extensions → Finder → Flicker.
+          EOF
+          )" \
+            --latest=false

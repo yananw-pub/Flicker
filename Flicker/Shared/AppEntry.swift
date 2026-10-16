@@ -24,6 +24,20 @@ struct AppEntry: Codable, Identifiable, Equatable, Hashable {
     /// 为 false 时直接显示在 Finder 右键菜单的一级菜单中。
     var collapsed: Bool
 
+    /// 规范化扩展名字符串（兼容各种中英文逗号、分号、空格分隔，去除通配符与点）
+    static func normalizeExtensions(from text: String) -> [String] {
+        let separators = CharacterSet(charactersIn: ",，;；、 \t\r\n")
+        return text
+            .components(separatedBy: separators)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+            .map { item -> String in
+                var s = item
+                if s.hasPrefix("*") { s = String(s.dropFirst()) }
+                return s.trimmingCharacters(in: CharacterSet(charactersIn: "."))
+            }
+            .filter { !$0.isEmpty }
+    }
+
     init(id: String = UUID().uuidString,
          name: String,
          appPath: String,
@@ -33,7 +47,8 @@ struct AppEntry: Codable, Identifiable, Equatable, Hashable {
         self.id = id
         self.name = name
         self.appPath = appPath
-        self.allowedExtensions = allowedExtensions.map { $0.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ".")) }
+        self.allowedExtensions = allowedExtensions
+            .flatMap { Self.normalizeExtensions(from: $0) }
         self.foldersOnly = foldersOnly
         self.collapsed = collapsed
     }
@@ -47,7 +62,8 @@ struct AppEntry: Codable, Identifiable, Equatable, Hashable {
         id = try c.decode(String.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
         appPath = try c.decode(String.self, forKey: .appPath)
-        allowedExtensions = try c.decodeIfPresent([String].self, forKey: .allowedExtensions) ?? []
+        let rawExts = try c.decodeIfPresent([String].self, forKey: .allowedExtensions) ?? []
+        allowedExtensions = rawExts.flatMap { Self.normalizeExtensions(from: $0) }
         foldersOnly = try c.decodeIfPresent(Bool.self, forKey: .foldersOnly) ?? false
         collapsed = try c.decodeIfPresent(Bool.self, forKey: .collapsed) ?? true
     }
@@ -59,12 +75,23 @@ struct AppEntry: Codable, Identifiable, Equatable, Hashable {
     /// - 文件夹：始终显示（无论 foldersOnly）。
     /// - 文件：foldersOnly 为 true 时不显示；否则按扩展名匹配，空数组适用全部。
     func matches(url: URL) -> Bool {
-        var isDir: ObjCBool = false
-        let isFolder = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir) && isDir.boolValue
+        let isFolder: Bool = {
+            if let values = try? url.resourceValues(forKeys: [.isDirectoryKey]), let isDir = values.isDirectory {
+                return isDir
+            }
+            var isDirObjC: ObjCBool = false
+            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirObjC) {
+                return isDirObjC.boolValue
+            }
+            return url.hasDirectoryPath
+        }()
+
         if isFolder { return true }
         if foldersOnly { return false }
         if allowedExtensions.isEmpty { return true }
-        let ext = url.pathExtension.lowercased()
+
+        let ext = url.pathExtension.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !ext.isEmpty else { return false }
         return allowedExtensions.contains(ext)
     }
 }

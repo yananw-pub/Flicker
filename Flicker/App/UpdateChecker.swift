@@ -110,6 +110,7 @@ struct UpdateChecker {
 
     // MARK: - UI
 
+    @MainActor
     private static func showAlert(version: String, url: URL) {
         let alert = NSAlert()
         alert.messageText = "发现新版本 v\(version)"
@@ -122,6 +123,7 @@ struct UpdateChecker {
         }
     }
 
+    @MainActor
     private static func showUpToDateAlert() {
         let alert = NSAlert()
         alert.messageText = "已是最新版本"
@@ -131,6 +133,7 @@ struct UpdateChecker {
         alert.runModal()
     }
 
+    @MainActor
     private static func showFailureAlert(message: String) {
         let alert = NSAlert()
         alert.messageText = "检查更新失败"

@@ -134,10 +134,7 @@ struct AppEntryEditor: View {
     }
 
     private func commit() {
-        let exts = extText
-            .split(whereSeparator: { $0 == "," || $0 == " " })
-            .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: ".")).lowercased() }
-            .filter { !$0.isEmpty }
+        let exts = AppEntry.normalizeExtensions(from: extText)
         let id: String
         switch mode {
         case .add: id = UUID().uuidString

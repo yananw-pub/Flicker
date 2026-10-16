@@ -25,6 +25,7 @@
 		A10018 /* OpenWithPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20021; };
 		A10019 /* ActionControlPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20022; };
 		A10020 /* GeneralSettingsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20023; };
+		A10021 /* FinderExtensionRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20024; };
 		A10007 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A20007; };
 		A10008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20008; };
 
@@ -58,6 +59,7 @@
 		A20021 /* OpenWithPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWithPanel.swift; sourceTree = "<group>"; };
 		A20022 /* ActionControlPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionControlPanel.swift; sourceTree = "<group>"; };
 		A20023 /* GeneralSettingsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsPanel.swift; sourceTree = "<group>"; };
+		A20024 /* FinderExtensionRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderExtensionRegistrar.swift; sourceTree = "<group>"; };
 		A20007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20008 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20009 /* Flicker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flicker.entitlements; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			children = (
 				A20003 /* FlickerApp.swift */,
 				A20011 /* AppDelegate.swift */,
+				A20024 /* FinderExtensionRegistrar.swift */,
 				ABB5B895CCC18444259CAE67 /* AppActions.swift */,
 				ACA3FB34AEE078485FBDDC8E /* UpdateChecker.swift */,
 				A20012 /* URLOpener.swift */,
@@ -230,6 +233,7 @@
 				A10014 /* MenuSettings.swift in Sources */,
 				A10003 /* FlickerApp.swift in Sources */,
 				A10009 /* AppDelegate.swift in Sources */,
+				A10021 /* FinderExtensionRegistrar.swift in Sources */,
 				ABC1965B1C239043D68EB32D /* AppActions.swift in Sources */,
 				AC65FD248088474716A53EE3 /* UpdateChecker.swift in Sources */,
 				A10010 /* URLOpener.swift in Sources */,
@@ -479,7 +483,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 wangyanan. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -504,7 +508,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 wangyanan. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -524,7 +528,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FlickerExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@executable_path/../../../../Frameworks");
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -545,7 +549,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FlickerExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@executable_path/../../../../Frameworks");
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wangyanan.flicker.extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

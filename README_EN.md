@@ -43,7 +43,7 @@ A minimalist macOS Finder right-click menu extension — open files and folders 
 ```
 Flicker/
 ├── App/          # App entry, config list, add/edit panels, store
-├── Shared/       # AppEntry (data model), SharedStore (App Group read/write)
+├── Shared/       # AppEntry (data model), SharedStore (shared config I/O)
 └── Resources/    # Info.plist, entitlements, Assets
 
 FlickerExtension/   # Finder Sync extension (FIFinderSync subclass)
@@ -70,7 +70,16 @@ xcodebuild -project Flicker.xcodeproj -scheme Flicker -configuration Debug build
 ```bash
 ./scripts/build_dmg.sh
 # Output: dist/Flicker-<version>.dmg
+
+# Optional suffix for test builds
+./scripts/build_dmg.sh sandbox-fix
+# → dist/Flicker-<version>-sandbox-fix.dmg
 ```
+
+GitHub Actions (`.github/workflows/release-dmg.yml`) builds the DMG on push / manual dispatch:
+
+- Download from **Actions → Build DMG** artifacts
+- Pushing a `v*` tag creates a GitHub Release with the DMG attached
 
 ### Enable the Extension
 
@@ -86,15 +95,15 @@ If you fork this project and plan to build your own copy, update these values to
 |---------|---------------|----------|
 | Bundle Identifier (App) | `com.wangyanan.flicker` | `project.pbxproj` |
 | Bundle Identifier (Extension) | `com.wangyanan.flicker.extension` | `project.pbxproj` |
-| App Group | `group.com.wangyanan.flicker` | `Shared/SharedStore.swift` |
 | URL Scheme | `flicker` | `Resources/Info.plist` |
 
-> **Tip:** App Group must be registered in the Apple Developer portal. For local development, ad-hoc signing (`CODE_SIGN_IDENTITY = "-"`) works without a developer account.
+> **Tip:** For local development, ad-hoc signing (`CODE_SIGN_IDENTITY = "-"`) works without a developer account. Settings are shared via the extension container (no App Group / temporary-exception required).
 
 ## Technical Notes
 
 - Relative paths are based on the current Finder window folder (`targetedURL`); falls back to absolute path when unavailable
-- Configuration is shared between the app and extension via JSON files in the user's Application Support directory
+- Configuration lives in the Finder Sync **extension container** (`~/Library/Containers/com.wangyanan.flicker.extension/Data/Library/Application Support/Flicker/`) so both the unsandboxed app and sandboxed extension share one folder—no temporary-exception or hardcoded username. Legacy `~/Library/Application Support/Flicker/` is migrated automatically and mirrored on save
+- On launch, Flicker re-registers its embedded Finder Sync extension; Open With panel has **Repair Extension Registration** to recover when duplicate builds hide the menu
 - Finder Sync extensions are hosted by macOS; quitting Flicker does not unload the extension. To temporarily hide Flicker's menu output, disable **Enable Finder Context Menu** in Action Control
 - Minimum deployment target: macOS 14.0 (Sonoma)
 

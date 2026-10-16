@@ -70,7 +70,16 @@ xcodebuild -project Flicker.xcodeproj -scheme Flicker -configuration Debug build
 ```bash
 ./scripts/build_dmg.sh
 # 产物位于 dist/Flicker-<version>.dmg
+
+# 可选后缀（便于区分测试包）
+./scripts/build_dmg.sh sandbox-fix
+# → dist/Flicker-<version>-sandbox-fix.dmg
 ```
+
+GitHub Actions（`.github/workflows/release-dmg.yml`）会在推送 / 手动触发时自动构建 DMG：
+
+- **Actions → Build DMG → 产物** 可直接下载 artifact
+- 推送 `v*` tag 时会自动创建 GitHub Release 并附带 DMG
 
 ### 首次启用扩展
 
@@ -86,15 +95,15 @@ xcodebuild -project Flicker.xcodeproj -scheme Flicker -configuration Debug build
 |--------|--------|----------|
 | Bundle Identifier（App） | `com.wangyanan.flicker` | `project.pbxproj` |
 | Bundle Identifier（Extension） | `com.wangyanan.flicker.extension` | `project.pbxproj` |
-| App Group | `group.com.wangyanan.flicker` | `Shared/SharedStore.swift` |
 | URL Scheme | `flicker` | `Resources/Info.plist` |
 
-> **提示：** App Group 需要在 Apple Developer 后台注册后才能使用。本地开发可使用 ad-hoc 签名（`CODE_SIGN_IDENTITY = "-"`），无需开发者账号。
+> **提示：** 本地开发可使用 ad-hoc 签名（`CODE_SIGN_IDENTITY = "-"`），无需开发者账号。配置通过扩展 Container 共享，不再依赖 App Group / temporary-exception。
 
 ## 技术说明
 
 - 相对路径基准为当前 Finder 窗口文件夹（`targetedURL`），无法获取时回退为绝对路径
-- 配置通过用户 Application Support 目录中的 JSON 文件在 App 与扩展间共享
+- 配置写在 Finder Sync **扩展自己的 Container**（`~/Library/Containers/com.wangyanan.flicker.extension/Data/Library/Application Support/Flicker/`），主 App 与扩展读写同一目录；无需 temporary-exception / 写死用户名。旧版 `~/Library/Application Support/Flicker/` 会自动迁移，保存时也会镜像一份方便查看
+- 启动时会重新注册本包内的 Finder Sync 扩展；「打开方式」面板提供「修复扩展注册」，避免 `/tmp` 等多份构建导致菜单消失
 - Finder Sync 扩展由 macOS 托管，退出 Flicker 主 App 不等于卸载扩展；如需临时关闭 Flicker 菜单，可在「操作控制」中关闭「启用 Finder 右键菜单」
 - 最低系统版本 macOS 14.0（Sonoma）
 
